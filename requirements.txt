@@ -1,0 +1,7 @@
+obp==0.5.7
+numpy
+pandas==1.5.3
+scipy
+scikit-learn
+matplotlib==3.7.5
+seaborn==0.11.2
