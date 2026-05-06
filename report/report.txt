@@ -154,7 +154,23 @@ intervals and effective sample size together with policy value estimates.
 
 \subsection{Target Policies}
 
-We evaluated five target policies.
+We evaluated five target policies. All policies are trained in an offline
+batch manner: parameters are fit once using only the training split, and the
+resulting fixed policy is then evaluated on the held-out evaluation split. We
+do not simulate online updates during evaluation. Uniform random and
+epsilon-greedy popularity are stochastic policies. LinUCB, Logistic UCB, and
+Linear Thompson Sampling output one selected action per context in our
+evaluation, so their action distributions are represented as one-hot vectors.
+For a deterministic policy $f$, we use
+\begin{equation}
+\pi(a|x) =
+\begin{cases}
+1, & a=f(x),\\
+0, & a\neq f(x).
+\end{cases}
+\end{equation}
+These probabilities are the target-policy probabilities used by the OPE
+estimators.
 
 \textbf{Uniform Random.} This baseline assigns equal probability to every
 item:
@@ -165,9 +181,9 @@ It is useful as a sanity check because it is close to the random behavior
 policy.
 
 \textbf{Epsilon-Greedy Popularity.} This policy estimates the mean reward for
-each action on the training split. It chooses the historically best action
-$a^*$ with probability $1-\epsilon$ and explores uniformly with probability
-$\epsilon$:
+each action using only the training split. It chooses the historically best
+training action $a^*$ with probability $1-\epsilon$ and explores uniformly
+with probability $\epsilon$:
 \begin{equation}
 \pi(a|x) =
 \begin{cases}
@@ -176,8 +192,13 @@ $\epsilon$:
 \end{cases}
 \end{equation}
 
-\textbf{LinUCB.} LinUCB fits a separate linear reward model for each action
-and chooses the action with the largest optimistic score:
+\textbf{LinUCB.} LinUCB fits a separate ridge-regularized linear reward model
+for each action. For action $a$, we use
+$A_a = \lambda I + X_a^\top X_a$ and
+$\hat{\theta}_a = A_a^{-1}X_a^\top y_a$, where $X_a$ contains the training
+contexts in which action $a$ was logged. We set the ridge parameter to
+$\lambda=1.0$. At evaluation time, LinUCB chooses the action with the largest
+optimistic score:
 \begin{equation}
 a_t =
 \arg\max_a
@@ -190,19 +211,39 @@ x_t^\top \hat{\theta}_a
 The first term estimates reward, while the second term adds an uncertainty
 bonus.
 
-\textbf{Logistic UCB.} Logistic UCB uses combined user and item features to
-model click probability. It then adds an uncertainty bonus and selects the
-action with the largest optimistic click score.
+\textbf{Logistic UCB.} Logistic UCB uses a single global logistic regression
+model on combined user and item features $z(x,a)$. After fitting the logistic
+model, we approximate uncertainty using the inverse of a regularized
+curvature matrix. Let $\hat{p}_i$ be the predicted click probability for a
+logged training example and let $\tilde{z}_i$ be the standardized feature
+vector with an intercept term. We compute
+\begin{equation}
+H =
+\lambda I +
+\sum_i \hat{p}_i(1-\hat{p}_i)\tilde{z}_i\tilde{z}_i^\top,
+\quad \lambda=1.0.
+\end{equation}
+For a candidate context-action pair, the score is
+\begin{equation}
+s(x,a) =
+\hat{p}(x,a) + \alpha
+\sqrt{\tilde{z}(x,a)^\top H^{-1}\tilde{z}(x,a)}.
+\end{equation}
+The policy chooses the action with the largest score.
 
-\textbf{Linear Thompson Sampling.} Linear Thompson Sampling fits per-action
-linear reward models and samples plausible parameters from a Gaussian
-posterior approximation:
+\textbf{Linear Thompson Sampling.} Linear Thompson Sampling uses the same
+per-action ridge design matrix as LinUCB. For each action, we approximate the
+posterior covariance by $\sigma^2 A_a^{-1}$, where $\sigma$ is the sampling
+scale hyperparameter. We sample one parameter vector for each action and then
+choose the action with the largest sampled reward:
 \begin{equation}
 a_t = \arg\max_a x_t^\top \tilde{\theta}_a,
 \quad
 \tilde{\theta}_a \sim
 \mathcal{N}(\hat{\theta}_a, \sigma^2 A_a^{-1}).
 \end{equation}
+Conditioned on these sampled parameters, the evaluated policy is
+deterministic and is represented by a one-hot action distribution.
 
 \subsection{Reward Model}
 
@@ -284,7 +325,26 @@ scale 0.2.
 For uncertainty, we used nonparametric bootstrap resampling over evaluation
 rounds with 200 bootstrap samples. We also performed a policy sweep over
 epsilon-greedy exploration rate, UCB exploration strength, and Thompson
-Sampling posterior scale.
+Sampling posterior scale. The sweep grid is summarized in
+Table~\ref{tab:sweep_grid}.
+
+\begin{table}[htbp]
+\caption{Policy Sweep Grid}
+\label{tab:sweep_grid}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{0.34\columnwidth}p{0.16\columnwidth}p{0.40\columnwidth}}
+\toprule
+Policy family & Parameter & Values \\
+\midrule
+Eps-Greedy & $\epsilon$ & 0, 0.05, 0.1, 0.2, 0.4, 0.8, 1.0 \\
+LinUCB & $\alpha$ & 0, 0.1, 0.25, 0.5, 1.0, 2.0 \\
+Logistic UCB & $\alpha$ & 0, 0.1, 0.25, 0.5, 1.0, 2.0 \\
+Linear TS & $\sigma$ & 0.05, 0.1, 0.2, 0.5, 1.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Results}
 
