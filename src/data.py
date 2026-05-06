@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from obp.dataset import OpenBanditDataset
 
 
 def load_open_bandit_feedback(
@@ -10,6 +9,13 @@ def load_open_bandit_feedback(
     data_path: str | None = None,
 ) -> dict:
     """Load logged bandit feedback from the Open Bandit Dataset."""
+    try:
+        from obp.dataset import OpenBanditDataset  # type: ignore
+    except ImportError as exc:
+        raise ImportError(
+            "OBP is not installed. Install project dependencies with `python -m pip install -r requirements.txt`."
+        ) from exc
+
     dataset = OpenBanditDataset(
         behavior_policy=behavior_policy,
         campaign=campaign,

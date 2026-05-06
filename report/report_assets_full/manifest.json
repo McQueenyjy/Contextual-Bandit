@@ -1,0 +1,31 @@
+{
+  "output_dir": "F:\\Documents\\GitHub\\Contextual-Bandit\\report\\report_assets_full",
+  "files": [
+    "figures/core_policy_value_by_estimator.pdf",
+    "figures/core_policy_value_by_estimator.png",
+    "figures/core_policy_value_confidence_intervals.pdf",
+    "figures/core_policy_value_confidence_intervals.png",
+    "figures/ope_estimator_heatmap.pdf",
+    "figures/ope_estimator_heatmap.png",
+    "figures/ope_stability_diagnostics.pdf",
+    "figures/ope_stability_diagnostics.png",
+    "figures/policy_sweep_dr.pdf",
+    "figures/policy_sweep_dr.png",
+    "figures/policy_sweep_effective_sample_size.pdf",
+    "figures/policy_sweep_effective_sample_size.png",
+    "figures/policy_sweep_ips.pdf",
+    "figures/policy_sweep_ips.png",
+    "figures/policy_sweep_snips.pdf",
+    "figures/policy_sweep_snips.png",
+    "tables/best_sweep_by_dr.csv",
+    "tables/best_sweep_by_dr.tex",
+    "tables/core_policy_confidence_intervals.csv",
+    "tables/core_policy_confidence_intervals.tex",
+    "tables/core_policy_values.csv",
+    "tables/core_policy_values.tex",
+    "tables/dataset_summary.csv",
+    "tables/dataset_summary.tex",
+    "tables/ope_diagnostics.csv",
+    "tables/ope_diagnostics.tex"
+  ]
+}

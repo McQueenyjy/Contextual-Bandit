@@ -1,0 +1,6 @@
+policy_label,behavior_mean_reward,ips,snips,dm,dr,effective_sample_size_ratio,logged_action_match_rate
+Uniform Random,0.004,0.004,0.004,0.018048,0.002594,1.0,1.0
+Eps-Greedy Popularity,0.004,0.0136,0.015044,0.075525,0.00985,0.018009,1.0
+LinUCB,0.004,0.016,0.017857,0.262301,-0.005978,0.0112,0.0112
+Logistic UCB,0.004,0.016,0.016949,0.0,0.016,0.0118,0.0118
+Linear TS,0.004,0.0,0.0,0.063725,0.016372,0.012,0.012

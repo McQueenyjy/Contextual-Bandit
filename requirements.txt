@@ -1,6 +1,6 @@
 obp==0.5.7
-numpy
-pandas==1.5.3
+numpy==1.23.5
+pandas==1.5.2
 scipy
 scikit-learn
 matplotlib==3.7.5

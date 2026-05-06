@@ -1,0 +1,6 @@
+policy_family_label,sweep_parameter,sweep_value,policy,ips,snips,dm,dr,effective_sample_size_ratio
+Eps-Greedy,epsilon,0.0,epsilon_greedy_popularity_epsilon_0_best_action_49,0.016,0.018182,0.089895,0.011664,0.011
+Linear TS,sample_scale,0.2,linear_thompson_sampling_scale_0.2,0.0,0.0,0.063725,0.016372,0.012
+LinUCB,alpha,0.1,linucb_alpha_0.1,0.016,0.017544,0.333195,0.017845,0.0114
+Logistic UCB,alpha,0.0,logistic_ucb_alpha_0,0.0,0.0,0.050797,0.017416,0.0106
+Uniform Random,none,0.0,uniform_random,0.004,0.004,0.018048,0.002594,1.0

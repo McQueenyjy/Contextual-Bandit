@@ -1,0 +1,11 @@
+item,value
+Total logged rounds,10000
+Training rounds,5000
+Evaluation rounds,5000
+Number of actions,80
+Context dimension,20
+Action context dimension,4
+Evaluation behavior mean reward,0.004
+Reward model backend,torch
+Device used,cuda
+Bootstrap samples,200

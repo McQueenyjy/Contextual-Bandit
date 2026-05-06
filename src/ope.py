@@ -39,13 +39,22 @@ def fit_reward_model(train_feedback: dict) -> object:
     return model
 
 
-def predict_expected_rewards(model: object, feedback: dict) -> np.ndarray:
+def predict_expected_rewards(model: object, feedback: dict, batch_size: int = 8192) -> np.ndarray:
     """Predict q_hat(x, a) for every round and every action."""
-    all_features = make_all_action_features(feedback["context"], feedback["action_context"])
-    n_rounds, n_actions, n_features = all_features.shape
-    flat_features = all_features.reshape(n_rounds * n_actions, n_features)
-    q_hat = model.predict_proba(flat_features)[:, 1]
-    return q_hat.reshape(n_rounds, n_actions)
+    context = feedback["context"]
+    action_context = feedback["action_context"]
+    n_rounds = feedback["n_rounds"]
+    n_actions = feedback["n_actions"]
+    q_hat = np.empty((n_rounds, n_actions), dtype=np.float32)
+
+    for start in range(0, n_rounds, batch_size):
+        end = min(start + batch_size, n_rounds)
+        all_features = make_all_action_features(context[start:end], action_context)
+        _, _, n_features = all_features.shape
+        flat_features = all_features.reshape((end - start) * n_actions, n_features)
+        q_hat[start:end] = model.predict_proba(flat_features)[:, 1].reshape(end - start, n_actions)
+
+    return q_hat
 
 
 def estimate_dm(action_dist: np.ndarray, q_hat: np.ndarray) -> float:

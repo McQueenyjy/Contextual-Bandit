@@ -1,0 +1,6 @@
+policy_label,mean_importance_weight,effective_sample_size,effective_sample_size_ratio
+Uniform Random,1.0,687163.0,1.0
+Eps-Greedy Popularity,1.011871,13446.373537,0.019568
+LinUCB,0.965826,8296.0,0.012073
+Logistic UCB,1.017517,8740.0,0.012719
+Linear TS,0.958026,8229.0,0.011975
